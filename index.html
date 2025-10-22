@@ -300,6 +300,41 @@
             width: 100%;
         }
 
+        /* Print Button */
+        .print-button {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--accent-gold);
+            color: var(--navy);
+            padding: 16px 32px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1rem;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 8px 24px rgba(212, 175, 55, 0.4);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .print-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 32px rgba(212, 175, 55, 0.5);
+            background: #b8941f;
+        }
+
+        .print-only {
+            display: none;
+        }
+
+        .screen-only {
+            display: block;
+        }
+
         /* Property Grid */
         .property-grid {
             display: grid;
@@ -635,9 +670,229 @@
                 gap: 30px;
             }
         }
+
+        /* Print/PDF Styles */
+        @media print {
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                color-adjust: exact !important;
+            }
+
+            .print-button {
+                display: none !important;
+            }
+
+            .screen-only {
+                display: none !important;
+            }
+
+            .print-only {
+                display: block !important;
+            }
+
+            body {
+                font-size: 11pt;
+                line-height: 1.5;
+                color: #000;
+                background: white;
+            }
+
+            .hero {
+                background: var(--navy) !important;
+                padding: 40px 20px;
+                page-break-after: avoid;
+            }
+
+            h1 {
+                font-size: 2.5rem;
+                page-break-after: avoid;
+            }
+
+            h2, h3 {
+                page-break-after: avoid;
+            }
+
+            .section {
+                padding: 30px 20px;
+                page-break-inside: avoid;
+            }
+
+            .section-header {
+                margin-bottom: 30px;
+            }
+
+            /* Ensure cards don't break across pages */
+            .thesis-card,
+            .package-card,
+            .property-card,
+            .highlight-card,
+            .document-card {
+                page-break-inside: avoid;
+                margin-bottom: 20px;
+            }
+
+            /* Package cards side by side */
+            .packages {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 20px;
+                page-break-inside: avoid;
+            }
+
+            /* Property grid in 2 columns for better space usage */
+            .property-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 20px;
+            }
+
+            /* Thesis grid in 2 columns */
+            .thesis-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 20px;
+            }
+
+            /* Market highlights in 4 columns */
+            .market-highlights {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 15px;
+            }
+
+            /* 227 Elm showcase */
+            .elm-showcase {
+                background: var(--navy) !important;
+                page-break-inside: avoid;
+                padding: 40px 20px;
+            }
+
+            .elm-content {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 30px;
+            }
+
+            /* Document links - show URLs */
+            .document-card {
+                display: flex;
+                align-items: center;
+                gap: 15px;
+                padding: 15px;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+            }
+
+            .documents-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 15px;
+            }
+
+            /* Contact section */
+            .contact-section {
+                background: var(--navy) !important;
+                padding: 40px 20px;
+                page-break-before: auto;
+            }
+
+            .contact-info {
+                display: flex;
+                justify-content: center;
+                gap: 40px;
+                flex-wrap: wrap;
+            }
+
+            /* Show URLs for links */
+            a[href^="http"]::after {
+                content: " (" attr(href) ")";
+                font-size: 0.8em;
+                color: #666;
+            }
+
+            /* Don't show URLs for document cards and contact links */
+            .document-card::after,
+            .contact-item a::after,
+            a[href^="https://github.com"]::after,
+            a[href^="https://raw.githubusercontent.com"]::after {
+                content: none !important;
+            }
+
+            /* Remove hover effects */
+            .thesis-card:hover,
+            .package-card:hover,
+            .property-card:hover {
+                transform: none;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            }
+
+            /* Optimize shadows for print */
+            .package-card,
+            .property-card,
+            .thesis-card {
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            }
+
+            /* Ensure proper margins */
+            @page {
+                margin: 0.75in;
+                size: letter;
+            }
+
+            /* Page breaks */
+            .section-dark {
+                page-break-before: auto;
+            }
+
+            /* Hero stats in single row */
+            .hero-stats {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 20px;
+            }
+
+            /* Property images - reduce height for print */
+            .property-image {
+                height: 180px;
+            }
+
+            /* Footer */
+            footer {
+                background: var(--dark-blue) !important;
+                padding: 20px;
+                page-break-before: avoid;
+            }
+
+            /* Remove page breaks within important sections */
+            .elm-showcase,
+            .packages,
+            .hero {
+                page-break-inside: avoid;
+            }
+
+            /* Button styling for print */
+            .btn {
+                border: 2px solid var(--accent-blue);
+                background: white;
+                color: var(--accent-blue);
+            }
+
+            .btn-primary {
+                border: 2px solid var(--accent-gold);
+                background: white;
+                color: var(--navy);
+            }
+        }
     </style>
 </head>
 <body>
+    <!-- Print Button -->
+    <button class="print-button" onclick="window.print()">
+        <span style="font-size: 1.2rem;">🖨️</span>
+        <span>Save as PDF</span>
+    </button>
+
     <!-- Hero Section -->
     <section class="hero">
         <div class="container">
@@ -1122,6 +1377,7 @@
             <div class="section-header">
                 <h2 class="section-title">Investment Documentation</h2>
                 <p class="section-subtitle">Download property details, financials, and market analysis</p>
+                <p class="print-only" style="margin-top: 15px; font-size: 0.95rem; color: var(--text-gray);">All documents available on GitHub at: github.com/RichardReynoldsRE/Biddeford-Package</p>
             </div>
 
             <div class="documents-grid">
@@ -1216,7 +1472,8 @@
             <p><strong>Richard Reynolds</strong> | Home Sweet Maine</p>
             <p>Keller Williams Realty | 190 Main Street, Saco, ME 04072</p>
             <p>207-560-4883 | richard@homesweetmaine.com</p>
-            <p style="margin-top: 20px; font-size: 0.85rem;">© 2025 All rights reserved. This offering is subject to errors, omissions, changes, or withdrawal without notice. All information should be independently verified.</p>
+            <p class="screen-only" style="margin-top: 20px; font-size: 0.85rem;">To save this as a PDF: File → Print → Save as PDF (or use the floating button)</p>
+            <p style="margin-top: 10px; font-size: 0.85rem;">© 2025 All rights reserved. This offering is subject to errors, omissions, changes, or withdrawal without notice. All information should be independently verified.</p>
         </div>
     </footer>
 </body>
