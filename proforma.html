@@ -1,0 +1,1557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investment Proforma | Biddeford Property Portfolio</title>
+    <meta name="description" content="Interactive financial proforma for 6-property Biddeford portfolio. Adjust assumptions and see real-time valuations.">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --navy: #0a1628;
+            --dark-blue: #1a2332;
+            --accent-gold: #d4af37;
+            --accent-blue: #2e5c8a;
+            --light-gray: #f5f5f5;
+            --text-gray: #6b7280;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: var(--white);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--navy) 0%, var(--dark-blue) 100%);
+            color: var(--white);
+            padding: 80px 20px 60px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-content {
+            text-align: center;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: var(--accent-gold);
+            color: var(--navy);
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            letter-spacing: 0.5px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 15px;
+            letter-spacing: -1px;
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 40px;
+            font-weight: 300;
+        }
+
+        /* Portfolio Stats */
+        .portfolio-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent-gold);
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.8);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Section Styles */
+        .section {
+            padding: 60px 20px;
+        }
+
+        .section-dark {
+            background: var(--light-gray);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .section-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 15px;
+        }
+
+        .section-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-gray);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Controls Panel */
+        .controls-panel {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 40px;
+        }
+
+        .controls-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        .control-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .control-item label {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--navy);
+            font-size: 0.95rem;
+        }
+
+        .control-item input {
+            padding: 12px 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            background: var(--white);
+        }
+
+        .control-item input:focus {
+            outline: none;
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .button {
+            background: var(--accent-gold);
+            color: var(--navy);
+            border: none;
+            padding: 14px 30px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .button:hover {
+            background: #c9a332;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+        }
+
+        .button-secondary {
+            background: var(--navy);
+            color: var(--white);
+        }
+
+        .button-secondary:hover {
+            background: var(--dark-blue);
+        }
+
+        /* Property Cards */
+        .properties-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 30px;
+        }
+
+        .property-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 35px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            border: 1px solid #e5e7eb;
+        }
+
+        .property-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        .property-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid var(--accent-gold);
+        }
+
+        .property-header h3 {
+            color: var(--navy);
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .property-badge {
+            background: var(--navy);
+            color: var(--white);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .property-badge.existing {
+            background: var(--accent-blue);
+        }
+
+        .property-badge.condo {
+            background: var(--accent-gold);
+            color: var(--navy);
+        }
+
+        .property-info {
+            margin-bottom: 25px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: var(--text-gray);
+            font-size: 0.95rem;
+        }
+
+        .info-value {
+            color: var(--navy);
+            font-weight: 600;
+        }
+
+        .info-value.positive {
+            color: #059669;
+        }
+
+        .info-value.highlight {
+            background: rgba(212, 175, 55, 0.15);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: 700;
+            color: var(--navy);
+        }
+
+        /* Tables */
+        .unit-table {
+            width: 100%;
+            margin: 20px 0;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+
+        .unit-table thead {
+            background: var(--light-gray);
+        }
+
+        .unit-table th {
+            padding: 12px 10px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--navy);
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .unit-table td {
+            padding: 12px 10px;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .unit-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .unit-table .positive {
+            color: #059669;
+            font-weight: 600;
+        }
+
+        /* Condo Section */
+        .condo-section {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(212, 175, 55, 0.05) 100%);
+            padding: 30px;
+            border-radius: 12px;
+            margin-top: 25px;
+            border: 2px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .condo-section h4 {
+            color: var(--navy);
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
+
+        /* Summary Cards */
+        .summary-card {
+            background: linear-gradient(135deg, var(--navy) 0%, var(--dark-blue) 100%);
+            color: var(--white);
+            border-radius: 16px;
+            padding: 40px;
+            margin-top: 40px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .summary-card h2 {
+            color: var(--white);
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2rem;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .summary-section h3 {
+            color: var(--accent-gold);
+            border-bottom: 2px solid rgba(212, 175, 55, 0.3);
+            padding-bottom: 12px;
+            margin-bottom: 15px;
+        }
+
+        .summary-section p {
+            line-height: 1.8;
+            margin-bottom: 10px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .summary-highlight {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(212, 175, 55, 0.15);
+            border-radius: 10px;
+            border-left: 4px solid var(--accent-gold);
+        }
+
+        .summary-highlight strong {
+            color: var(--accent-gold);
+        }
+
+        /* Market Overview */
+        .market-overview {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .market-overview h3 {
+            color: var(--navy);
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .market-overview p {
+            color: var(--text-gray);
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        .market-overview ul {
+            margin: 20px 0;
+            padding-left: 25px;
+        }
+
+        .market-overview li {
+            color: var(--text-gray);
+            line-height: 1.8;
+            margin-bottom: 10px;
+        }
+
+        .market-overview li strong {
+            color: var(--navy);
+        }
+
+        /* Contact Section */
+        .contact-section {
+            background: linear-gradient(135deg, var(--navy) 0%, var(--dark-blue) 100%);
+            color: var(--white);
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        .contact-content h2 {
+            font-size: 2.2rem;
+            margin-bottom: 15px;
+            color: var(--white);
+        }
+
+        .contact-content > p {
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .contact-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .contact-item {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .contact-item-icon {
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+
+        .contact-item-label {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .contact-item-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--white);
+        }
+
+        .contact-item-value a {
+            color: var(--accent-gold);
+            text-decoration: none;
+            transition: opacity 0.3s;
+        }
+
+        .contact-item-value a:hover {
+            opacity: 0.8;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--navy);
+            color: rgba(255, 255, 255, 0.8);
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        footer p {
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        footer strong {
+            color: var(--accent-gold);
+        }
+
+        /* Print Styles */
+        @media print {
+            .controls-panel,
+            .button-group {
+                display: none;
+            }
+            
+            .property-card {
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+
+            .hero {
+                padding: 40px 20px;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+
+            .properties-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .portfolio-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .controls-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-badge">INVESTMENT PROFORMA</div>
+                <h1>Biddeford Property Portfolio</h1>
+                <p class="hero-subtitle">Interactive Financial Analysis | Adjust Assumptions & See Real-Time Valuations</p>
+                
+                <div class="portfolio-stats">
+                    <div class="stat-card">
+                        <span class="stat-value">6</span>
+                        <span class="stat-label">Properties</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-value" id="totalUnits">32</span>
+                        <span class="stat-label">Total Units</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-value" id="portfolioPurchase">$4.79M</span>
+                        <span class="stat-label">Purchase Price</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-value" id="portfolioCosts">$430K</span>
+                        <span class="stat-label">Costs to Complete</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-value" id="portfolioAllIn">$5.22M</span>
+                        <span class="stat-label">Total All-In Cost</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-value" id="portfolioNOI">$342.6K</span>
+                        <span class="stat-label">Stabilized NOI</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-value" id="portfolioValue">$4.89M</span>
+                        <span class="stat-label">Stabilized Value</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-value" id="portfolioProfit">-$330K</span>
+                        <span class="stat-label">Value-Add Profit</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Controls Section -->
+    <section class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Adjust Your Assumptions</h2>
+                <p class="section-subtitle">Modify key variables and watch the portfolio valuation update in real-time</p>
+            </div>
+
+            <div class="controls-panel">
+                <div class="controls-grid">
+                    <div class="control-item">
+                        <label>Vacancy Rate (%)</label>
+                        <input type="number" id="vacancyRate" value="5.0" step="0.5" min="0" max="20">
+                    </div>
+                    <div class="control-item">
+                        <label>Management Fee (%)</label>
+                        <input type="number" id="managementFee" value="8.0" step="0.5" min="0" max="15">
+                    </div>
+                    <div class="control-item">
+                        <label>Cap Rate (%)</label>
+                        <input type="number" id="capRate" value="7.0" step="0.25" min="4" max="12">
+                    </div>
+                    <div class="control-item">
+                        <label>Operating Expense Ratio (%)</label>
+                        <input type="number" id="opexRatio" value="45" step="1" min="30" max="60">
+                    </div>
+                </div>
+                <div class="button-group">
+                    <button class="button" onclick="calculate()">🔄 Recalculate Portfolio</button>
+                    <button class="button button-secondary" onclick="window.print()">🖨️ Print / Save PDF</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Properties Section -->
+    <section class="section section-dark">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Property Analysis</h2>
+                <p class="section-subtitle">Detailed proformas for each property in the portfolio</p>
+            </div>
+
+            <div class="properties-grid">
+                <!-- 21 Wentworth -->
+                <div class="property-card">
+                    <div class="property-header">
+                        <h3>21 Wentworth Street</h3>
+                        <div class="property-badge existing">Existing</div>
+                    </div>
+                    <div class="property-info">
+                        <div class="info-row">
+                            <span class="info-label">Total Units:</span>
+                            <span class="info-value">5 (All 1BR/1BA)</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Current Occupancy:</span>
+                            <span class="info-value">3 of 5 units (60%)</span>
+                        </div>
+                    </div>
+                    
+                    <table class="unit-table">
+                        <thead>
+                            <tr>
+                                <th>Unit</th>
+                                <th>Current</th>
+                                <th>FMR</th>
+                                <th>Upside</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Unit 1</td>
+                                <td>$1,325</td>
+                                <td>$1,615</td>
+                                <td class="positive">+$290</td>
+                            </tr>
+                            <tr>
+                                <td>Unit 2</td>
+                                <td>$1,150</td>
+                                <td>$1,615</td>
+                                <td class="positive">+$465</td>
+                            </tr>
+                            <tr>
+                                <td>Unit 3</td>
+                                <td>Vacant</td>
+                                <td>$1,615</td>
+                                <td class="positive">+$1,615</td>
+                            </tr>
+                            <tr>
+                                <td>Unit 4</td>
+                                <td>$1,300</td>
+                                <td>$1,615</td>
+                                <td class="positive">+$315</td>
+                            </tr>
+                            <tr>
+                                <td>Unit 5</td>
+                                <td>Vacant</td>
+                                <td>$1,615</td>
+                                <td class="positive">+$1,615</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="property-info">
+                        <div class="info-row">
+                            <span class="info-label">Current Annual Income:</span>
+                            <span class="info-value">$45,900</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">FMR Annual Income:</span>
+                            <span class="info-value">$96,900</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Annual Upside:</span>
+                            <span class="info-value positive">+$51,000 (111%)</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Stabilized NOI:</span>
+                            <span class="info-value highlight" id="wentworth-noi">$50,622</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Stabilized Value:</span>
+                            <span class="info-value highlight" id="wentworth-value">$723,171</span>
+                        </div>
+                    </div>
+
+                    <div class="condo-section" style="margin-top: 25px; background: linear-gradient(135deg, rgba(10, 22, 40, 0.05) 0%, rgba(10, 22, 40, 0.02) 100%); border-color: rgba(10, 22, 40, 0.1);">
+                        <h4>💰 Investment Analysis</h4>
+                        <div class="property-info">
+                            <div class="info-row">
+                                <span class="info-label">Purchase Price:</span>
+                                <span class="info-value" id="wentworth-purchase">$550,000</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Costs to Complete:</span>
+                                <span class="info-value" id="wentworth-costs">$30,000</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Total All-In Cost:</span>
+                                <span class="info-value highlight" id="wentworth-allin">$580,000</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Value-Add Profit:</span>
+                                <span class="info-value positive" id="wentworth-profit">$143,171</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Return on Cost:</span>
+                                <span class="info-value positive" id="wentworth-profit-pct">24.7%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 128 Alfred -->
+                <div class="property-card">
+                    <div class="property-header">
+                        <h3>128 Alfred Street</h3>
+                        <div class="property-badge existing">Existing</div>
+                    </div>
+                    <div class="property-info">
+                        <div class="info-row">
+                            <span class="info-label">Total Units:</span>
+                            <span class="info-value">6 (3x 1BR, 3x 2BR)</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Current Occupancy:</span>
+                            <span class="info-value">2 of 6 units (33%)</span>
+                        </div>
+                    </div>
+                    
+                    <table class="unit-table">
+                        <thead>
+                            <tr>
+                                <th>Unit</th>
+                                <th>Type</th>
+                                <th>Current</th>
+                                <th>FMR</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Unit 1</td>
+                                <td>1BR</td>
+                                <td>Vacant</td>
+                                <td>$1,615</td>
+                            </tr>
+                            <tr>
+                                <td>Unit 2</td>
+                                <td>2BR</td>
+                                <td>$1,950</td>
+                                <td>$2,011</td>
+                            </tr>
+                            <tr>
+                                <td>Unit 3</td>
+                                <td>1BR</td>
+                                <td>Vacant</td>
+                                <td>$1,615</td>
+                            </tr>
+                            <tr>
+                                <td>Unit 4</td>
+                                <td>2BR</td>
+                                <td>Vacant</td>
+                                <td>$2,011</td>
+                            </tr>
+                            <tr>
+                                <td>Unit 5</td>
+                                <td>1BR</td>
+                                <td>$1,700</td>
+                                <td>$1,615</td>
+                            </tr>
+                            <tr>
+                                <td>Unit 6</td>
+                                <td>2BR</td>
+                                <td>Vacant</td>
+                                <td>$2,011</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="property-info">
+                        <div class="info-row">
+                            <span class="info-label">Current Annual Income:</span>
+                            <span class="info-value">$43,800</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">FMR Annual Income:</span>
+                            <span class="info-value">$115,800</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Annual Upside:</span>
+                            <span class="info-value positive">+$72,000 (164%)</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Stabilized NOI:</span>
+                            <span class="info-value highlight" id="alfred-noi">$60,489</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Stabilized Value:</span>
+                            <span class="info-value highlight" id="alfred-value">$864,129</span>
+                        </div>
+                    </div>
+
+                    <div class="condo-section" style="margin-top: 25px; background: linear-gradient(135deg, rgba(10, 22, 40, 0.05) 0%, rgba(10, 22, 40, 0.02) 100%); border-color: rgba(10, 22, 40, 0.1);">
+                        <h4>💰 Investment Analysis</h4>
+                        <div class="property-info">
+                            <div class="info-row">
+                                <span class="info-label">Purchase Price:</span>
+                                <span class="info-value" id="alfred-purchase">$925,000</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Costs to Complete:</span>
+                                <span class="info-value" id="alfred-costs">$0</span>
+                            </div>
+                            <div class="info-row" style="font-size: 0.85rem; color: var(--text-gray); padding: 5px 0;">
+                                <span colspan="2">*Materials for Unit 1 finish provided (buyer covers labor/install: ~$30k)</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Total All-In Cost:</span>
+                                <span class="info-value highlight" id="alfred-allin">$925,000</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Value-Add Profit:</span>
+                                <span class="info-value positive" id="alfred-profit">-$60,871</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Return on Cost:</span>
+                                <span class="info-value positive" id="alfred-profit-pct">-6.6%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 7 Oak -->
+                <div class="property-card">
+                    <div class="property-header">
+                        <h3>7 Oak Street</h3>
+                        <div class="property-badge">Development</div>
+                    </div>
+                    <div class="property-info">
+                        <div class="info-row">
+                            <span class="info-label">Total Units:</span>
+                            <span class="info-value">4 (1x Studio, 3x 2BR)</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Status:</span>
+                            <span class="info-value">To Be Built</span>
+                        </div>
+                    </div>
+                    
+                    <table class="unit-table">
+                        <thead>
+                            <tr>
+                                <th>Unit Type</th>
+                                <th>Count</th>
+                                <th>Monthly FMR</th>
+                                <th>Annual</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Studio</td>
+                                <td>1</td>
+                                <td>$1,379</td>
+                                <td>$16,548</td>
+                            </tr>
+                            <tr>
+                                <td>2BR/1BA</td>
+                                <td>3</td>
+                                <td>$2,011</td>
+                                <td>$72,396</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="property-info">
+                        <div class="info-row">
+                            <span class="info-label">Gross Annual Income:</span>
+                            <span class="info-value">$88,944</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Stabilized NOI:</span>
+                            <span class="info-value highlight" id="oak-noi">$46,453</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Estimated Value:</span>
+                            <span class="info-value highlight" id="oak-value">$663,614</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Price per Unit:</span>
+                            <span class="info-value" id="oak-ppu">$165,904</span>
+                        </div>
+                    </div>
+
+                    <div class="condo-section" style="margin-top: 25px; background: linear-gradient(135deg, rgba(10, 22, 40, 0.05) 0%, rgba(10, 22, 40, 0.02) 100%); border-color: rgba(10, 22, 40, 0.1);">
+                        <h4>💰 Investment Analysis</h4>
+                        <div class="property-info">
+                            <div class="info-row">
+                                <span class="info-label">Purchase Price:</span>
+                                <span class="info-value" id="oak-purchase">$375,000</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Costs to Complete:</span>
+                                <span class="info-value" id="oak-costs">$400,000</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Total All-In Cost:</span>
+                                <span class="info-value highlight" id="oak-allin">$775,000</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Value-Add Profit:</span>
+                                <span class="info-value positive" id="oak-profit">-$111,386</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Return on Cost:</span>
+                                <span class="info-value positive" id="oak-profit-pct">-14.4%</span>
+                            </div>
+                        </div>
+                        <div class="info-row" style="font-size: 0.85rem; color: var(--text-gray); padding: 10px 0; margin-top: 10px; border-top: 1px solid rgba(0,0,0,0.1);">
+                            <span colspan="2">Note: Similar 4-unit buildings in Biddeford have sold for $850K, suggesting strong upside potential beyond conservative FMR valuation</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 17 Pine -->
+                <div class="property-card">
+                    <div class="property-header">
+                        <h3>17 Pine Street</h3>
+                        <div class="property-badge">Development</div>
+                    </div>
+                    <div class="property-info">
+                        <div class="info-row">
+                            <span class="info-label">Total Units:</span>
+                            <span class="info-value">2 (1x 2BR + 1x Studio)</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Concept:</span>
+                            <span class="info-value">SFH + Airbnb Studio</span>
+                        </div>
+                    </div>
+                    
+                    <table class="unit-table">
+                        <thead>
+                            <tr>
+                                <th>Unit Type</th>
+                                <th>Use</th>
+                                <th>Monthly</th>
+                                <th>Annual</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>2BR/1BA</td>
+                                <td>Main Home</td>
+                                <td>$2,011</td>
+                                <td>$24,132</td>
+                            </tr>
+                            <tr>
+                                <td>Studio</td>
+                                <td>Airbnb</td>
+                                <td>$1,379</td>
+                                <td>$16,548</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="property-info">
+                        <div class="info-row">
+                            <span class="info-label">Gross Annual Income:</span>
+                            <span class="info-value">$40,680</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Note:</span>
+                            <span class="info-value">Airbnb may generate higher income</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Stabilized NOI:</span>
+                            <span class="info-value highlight" id="pine-noi">$21,256</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Estimated Value:</span>
+                            <span class="info-value highlight" id="pine-value">$303,657</span>
+                        </div>
+                    </div>
+
+                    <div class="condo-section" style="margin-top: 25px; background: linear-gradient(135deg, rgba(10, 22, 40, 0.05) 0%, rgba(10, 22, 40, 0.02) 100%); border-color: rgba(10, 22, 40, 0.1);">
+                        <h4>💰 Investment Analysis</h4>
+                        <div class="property-info">
+                            <div class="info-row">
+                                <span class="info-label">Purchase Price:</span>
+                                <span class="info-value" id="pine-purchase">$300,000</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Costs to Complete:</span>
+                                <span class="info-value" id="pine-costs">$150,000</span>
+                            </div>
+                            <div class="info-row" style="font-size: 0.85rem; color: var(--text-gray); padding: 5px 0;">
+                                <span colspan="2">*Full siding provided on-site (buyer covers labor/install)</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Total All-In Cost:</span>
+                                <span class="info-value highlight" id="pine-allin">$450,000</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Value-Add Profit:</span>
+                                <span class="info-value positive" id="pine-profit">-$146,343</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Return on Cost:</span>
+                                <span class="info-value positive" id="pine-profit-pct">-32.5%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 99 Summer -->
+                <div class="property-card">
+                    <div class="property-header">
+                        <h3>99 Summer Street</h3>
+                        <div class="property-badge">Development</div>
+                    </div>
+                    <div class="property-info">
+                        <div class="info-row">
+                            <span class="info-label">Total Units:</span>
+                            <span class="info-value">6 (2x 1BR, 4x 2BR)</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Status:</span>
+                            <span class="info-value">To Be Built</span>
+                        </div>
+                    </div>
+                    
+                    <table class="unit-table">
+                        <thead>
+                            <tr>
+                                <th>Unit Type</th>
+                                <th>Count</th>
+                                <th>Monthly FMR</th>
+                                <th>Annual</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1BR/1BA</td>
+                                <td>2</td>
+                                <td>$1,615</td>
+                                <td>$38,760</td>
+                            </tr>
+                            <tr>
+                                <td>2BR/1BA</td>
+                                <td>4</td>
+                                <td>$2,011</td>
+                                <td>$96,528</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="property-info">
+                        <div class="info-row">
+                            <span class="info-label">Gross Annual Income:</span>
+                            <span class="info-value">$135,288</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Stabilized NOI:</span>
+                            <span class="info-value highlight" id="summer-noi">$70,675</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Estimated Value:</span>
+                            <span class="info-value highlight" id="summer-value">$1,009,643</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Price per Unit:</span>
+                            <span class="info-value" id="summer-ppu">$168,274</span>
+                        </div>
+                    </div>
+
+                    <div class="condo-section" style="margin-top: 25px; background: linear-gradient(135deg, rgba(10, 22, 40, 0.05) 0%, rgba(10, 22, 40, 0.02) 100%); border-color: rgba(10, 22, 40, 0.1);">
+                        <h4>💰 Investment Analysis</h4>
+                        <div class="property-info">
+                            <div class="info-row">
+                                <span class="info-label">Purchase Price:</span>
+                                <span class="info-value" id="summer-purchase">$600,000</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Costs to Complete:</span>
+                                <span class="info-value" id="summer-costs">$300,000</span>
+                            </div>
+                            <div class="info-row" style="font-size: 0.85rem; color: var(--text-gray); padding: 5px 0;">
+                                <span colspan="2">*Electrical service meters + full siding provided on-site (buyer covers labor/install)</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Total All-In Cost:</span>
+                                <span class="info-value highlight" id="summer-allin">$900,000</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Value-Add Profit:</span>
+                                <span class="info-value positive" id="summer-profit">$109,643</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Return on Cost:</span>
+                                <span class="info-value positive" id="summer-profit-pct">12.2%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 227 Elm -->
+                <div class="property-card">
+                    <div class="property-header">
+                        <h3>227 Elm Street</h3>
+                        <div class="property-badge condo">Condo Play</div>
+                    </div>
+                    <div class="property-info">
+                        <div class="info-row">
+                            <span class="info-label">Total Units:</span>
+                            <span class="info-value">9 (3 Studio, 3x 1BR, 2x 2BR, 1x 3BR)</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Strategy:</span>
+                            <span class="info-value">Condominium Development</span>
+                        </div>
+                    </div>
+
+                    <div class="condo-section">
+                        <h4>💰 Condominium Sales Projection</h4>
+                        <table class="unit-table">
+                            <thead>
+                                <tr>
+                                    <th>Unit Type</th>
+                                    <th>Count</th>
+                                    <th>Price/Unit</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Studio</td>
+                                    <td>3</td>
+                                    <td>$175,000</td>
+                                    <td>$525,000</td>
+                                </tr>
+                                <tr>
+                                    <td>1BR</td>
+                                    <td>3</td>
+                                    <td>$225,000</td>
+                                    <td>$675,000</td>
+                                </tr>
+                                <tr>
+                                    <td>2BR</td>
+                                    <td>2</td>
+                                    <td>$295,000</td>
+                                    <td>$590,000</td>
+                                </tr>
+                                <tr>
+                                    <td>3BR</td>
+                                    <td>1</td>
+                                    <td>$350,000</td>
+                                    <td>$350,000</td>
+                                </tr>
+                                <tr style="font-weight: bold; background: var(--light-gray);">
+                                    <td colspan="3">TOTAL SALES REVENUE</td>
+                                    <td>$2,140,000</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="property-info" style="margin-top: 25px;">
+                        <div class="info-row">
+                            <span class="info-label">Est. Development Cost:</span>
+                            <span class="info-value">$2,438,000</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Sales & Marketing (5%):</span>
+                            <span class="info-value">$107,000</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Developer Profit:</span>
+                            <span class="info-value highlight">-$405,000</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Profit Margin:</span>
+                            <span class="info-value positive">-15.9%</span>
+                        </div>
+                    </div>
+
+                    <div class="condo-section" style="background: linear-gradient(135deg, rgba(5, 150, 105, 0.1) 0%, rgba(5, 150, 105, 0.05) 100%); border-color: rgba(5, 150, 105, 0.2);">
+                        <h4>🏢 Alternative: Hold as Rental Property</h4>
+                        <div class="property-info">
+                            <div class="info-row">
+                                <span class="info-label">Annual Income @ FMR:</span>
+                                <span class="info-value">$177,804</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Stabilized NOI:</span>
+                                <span class="info-value highlight" id="elm-noi">$92,881</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Value @ 7% Cap:</span>
+                                <span class="info-value highlight" id="elm-value">$1,326,871</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="condo-section" style="margin-top: 25px; background: linear-gradient(135deg, rgba(10, 22, 40, 0.05) 0%, rgba(10, 22, 40, 0.02) 100%); border-color: rgba(10, 22, 40, 0.1);">
+                        <h4>💰 Investment Analysis</h4>
+                        <div class="property-info">
+                            <div class="info-row">
+                                <span class="info-label">Purchase Price:</span>
+                                <span class="info-value" id="elm-purchase">$2,038,000</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Costs to Complete:</span>
+                                <span class="info-value" id="elm-costs">$400,000</span>
+                            </div>
+                            <div class="info-row" style="font-size: 0.85rem; color: var(--text-gray); padding: 5px 0;">
+                                <span colspan="2">*All heat pumps, cabinets, and hardwood flooring provided on-site (buyer covers labor/install)</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Total All-In Cost:</span>
+                                <span class="info-value highlight" id="elm-allin">$2,438,000</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Value-Add Profit (Rental):</span>
+                                <span class="info-value positive" id="elm-profit">-$1,111,129</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Return on Cost (Rental):</span>
+                                <span class="info-value positive" id="elm-profit-pct">-45.6%</span>
+                            </div>
+                        </div>
+                        <div class="info-row" style="font-size: 0.85rem; color: var(--text-gray); padding: 10px 0; margin-top: 10px; border-top: 1px solid rgba(0,0,0,0.1);">
+                            <span colspan="2">Note: While condo conversion shows -15.9% margin, it's still preferred over rental hold (-45.6% ROC). Consider higher unit pricing or phased development approach</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Investment Summary -->
+    <section class="section">
+        <div class="container">
+            <div class="summary-card">
+                <h2>Investment Summary</h2>
+                <div class="summary-grid">
+                    <div class="summary-section">
+                        <h3>Existing Properties</h3>
+                        <p>• <strong>21 Wentworth:</strong> 5 units, 60% occupied, strong upside to FMR</p>
+                        <p>• <strong>128 Alfred:</strong> 6 units, 33% occupied, significant value-add opportunity</p>
+                        <div class="summary-highlight">
+                            <strong>Combined:</strong> 11 units generating $89,700/yr with potential to reach $212,700/yr at FMR. Immediate cash flow with $123,000 annual upside opportunity.
+                        </div>
+                    </div>
+                    <div class="summary-section">
+                        <h3>Development Portfolio</h3>
+                        <p>• <strong>7 Oak:</strong> 4-unit new construction (Studio + 3x 2BR)</p>
+                        <p>• <strong>17 Pine:</strong> SFH + Airbnb studio hybrid concept</p>
+                        <p>• <strong>99 Summer:</strong> 6-unit new construction (2x 1BR + 4x 2BR)</p>
+                        <p>• <strong>227 Elm:</strong> 9-unit condo or rental conversion opportunity</p>
+                        <div class="summary-highlight">
+                            <strong>Combined:</strong> 21 new units with $442,716/yr income potential. Mix of rental and condo-conversion opportunities for maximum flexibility.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="market-overview" style="margin-top: 40px;">
+                <h3>📍 Biddeford Market Overview</h3>
+                <p>
+                    All properties are located in <strong>Biddeford, Maine</strong>, positioned in the heart of the revitalized downtown district. 
+                    Biddeford is part of the <strong>Portland ME HUD Metro FMR Area</strong>, benefiting from Portland's strong rental fundamentals 
+                    while offering more attractive pricing and higher yields.
+                </p>
+                <ul>
+                    <li><strong>FY 2025 HUD Fair Market Rents:</strong>
+                        <ul style="margin-top: 10px;">
+                            <li>Studio: $1,379/month</li>
+                            <li>1 Bedroom: $1,615/month</li>
+                            <li>2 Bedroom: $2,011/month</li>
+                            <li>3 Bedroom: $2,387/month</li>
+                        </ul>
+                    </li>
+                    <li style="margin-top: 15px;"><strong>Investment Advantages:</strong> Mix of immediate cash flow (existing properties) and 
+                    development upside (new construction). Diversified risk across 6 properties with multiple exit strategies including 
+                    condo conversion at 227 Elm.</li>
+                    <li><strong>Market Momentum:</strong> Downtown Biddeford transformation with $216M in recent investment, 8-12% annual 
+                    appreciation, and strong rental demand from Portland commuters.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact-section">
+        <div class="container">
+            <div class="contact-content">
+                <h2>Ready to Discuss This Opportunity?</h2>
+                <p>Contact Richard Reynolds for detailed due diligence materials, property tours, or financing discussions.</p>
+                
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <div class="contact-item-icon">📧</div>
+                        <div class="contact-item-label">Email</div>
+                        <div class="contact-item-value">
+                            <a href="mailto:richard@homesweetmaine.com">richard@homesweetmaine.com</a>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <div class="contact-item-icon">📱</div>
+                        <div class="contact-item-label">Direct</div>
+                        <div class="contact-item-value">
+                            <a href="tel:207-560-4883">207-560-4883</a>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <div class="contact-item-icon">🏢</div>
+                        <div class="contact-item-label">Brokerage</div>
+                        <div class="contact-item-value">Keller Williams Realty</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p><strong>Richard Reynolds</strong> | Home Sweet Maine</p>
+            <p>Keller Williams Realty | 190 Main Street, Saco, ME 04072</p>
+            <p>207-560-4883 | richard@homesweetmaine.com</p>
+            <p style="margin-top: 20px; font-size: 0.85rem;">© 2025 All rights reserved. This offering is subject to errors, omissions, changes, or withdrawal without notice. All information should be independently verified.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Property data
+        const properties = {
+            wentworth: {
+                currentIncome: 45900,
+                fmrIncome: 96900,
+                units: 5,
+                purchasePrice: 550000,
+                costsToComplete: 30000,
+                costsCoveredBySeller: 0,
+                arv: 600000
+            },
+            alfred: {
+                currentIncome: 43800,
+                fmrIncome: 115800,
+                units: 6,
+                purchasePrice: 925000,
+                costsToComplete: 30000,
+                costsCoveredBySeller: 0,
+                arv: 1000000
+            },
+            oak: {
+                currentIncome: 0,
+                fmrIncome: 88944,
+                units: 4,
+                purchasePrice: 375000,
+                costsToComplete: 400000,
+                costsCoveredBySeller: 0,
+                arv: 850000
+            },
+            pine: {
+                currentIncome: 0,
+                fmrIncome: 40680,
+                units: 2,
+                purchasePrice: 300000,
+                costsToComplete: 150000,
+                costsCoveredBySeller: 0,
+                arv: 550000
+            },
+            summer: {
+                currentIncome: 0,
+                fmrIncome: 135288,
+                units: 6,
+                purchasePrice: 600000,
+                costsToComplete: 300000,
+                costsCoveredBySeller: 0,
+                arv: 1100000
+            },
+            elm: {
+                currentIncome: 0,
+                fmrIncome: 177804,
+                units: 9,
+                purchasePrice: 2038000,
+                costsToComplete: 400000,
+                costsCoveredBySeller: 0,
+                arv: null  // Will use cap rate calculation for Elm
+            }
+        };
+
+        function formatCurrency(value) {
+            return '$' + value.toLocaleString('en-US', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            });
+        }
+
+        function formatCurrencyShort(value) {
+            if (value >= 1000000) {
+                return '$' + (value / 1000000).toFixed(2) + 'M';
+            } else if (value >= 1000) {
+                return '$' + (value / 1000).toFixed(1) + 'K';
+            }
+            return formatCurrency(value);
+        }
+
+        function calculate() {
+            const vacancyRate = parseFloat(document.getElementById('vacancyRate').value) / 100;
+            const managementFee = parseFloat(document.getElementById('managementFee').value) / 100;
+            const capRate = parseFloat(document.getElementById('capRate').value) / 100;
+            const opexRatio = parseFloat(document.getElementById('opexRatio').value) / 100;
+
+            let totalUnits = 0;
+            let totalCurrentIncome = 0;
+            let totalFmrIncome = 0;
+            let totalNOI = 0;
+            let totalPurchase = 0;
+            let totalCosts = 0;
+            let totalAllIn = 0;
+            let totalValue = 0;
+
+            // Calculate for each property
+            Object.keys(properties).forEach(key => {
+                const prop = properties[key];
+                totalUnits += prop.units;
+                totalCurrentIncome += prop.currentIncome;
+                totalFmrIncome += prop.fmrIncome;
+                totalPurchase += prop.purchasePrice;
+                totalCosts += (prop.costsToComplete - prop.costsCoveredBySeller);
+                totalAllIn += prop.purchasePrice + (prop.costsToComplete - prop.costsCoveredBySeller);
+
+                // Calculate NOI
+                const egi = prop.fmrIncome * (1 - vacancyRate);
+                const noi = egi * (1 - opexRatio);
+                totalNOI += noi;
+
+                // Calculate value - use ARV if provided, otherwise use cap rate formula
+                const value = prop.arv ? prop.arv : (noi / capRate);
+                totalValue += value;
+                const allInCost = prop.purchasePrice + (prop.costsToComplete - prop.costsCoveredBySeller);
+                const profit = value - allInCost;
+                const profitPercent = (profit / allInCost) * 100;
+
+                // Update display
+                document.getElementById(`${key}-noi`).textContent = formatCurrency(noi);
+                document.getElementById(`${key}-value`).textContent = formatCurrency(value);
+                document.getElementById(`${key}-purchase`).textContent = formatCurrency(prop.purchasePrice);
+                document.getElementById(`${key}-costs`).textContent = formatCurrency(prop.costsToComplete - prop.costsCoveredBySeller);
+                document.getElementById(`${key}-allin`).textContent = formatCurrency(allInCost);
+                document.getElementById(`${key}-profit`).textContent = formatCurrency(profit);
+                document.getElementById(`${key}-profit-pct`).textContent = profitPercent.toFixed(1) + '%';
+
+                // Update price per unit for development properties
+                if (['oak', 'summer'].includes(key)) {
+                    const ppu = value / prop.units;
+                    document.getElementById(`${key}-ppu`).textContent = formatCurrency(ppu);
+                }
+            });
+
+            // Update portfolio summary (hero stats)
+            document.getElementById('totalUnits').textContent = totalUnits;
+            document.getElementById('currentIncome').textContent = formatCurrencyShort(totalCurrentIncome);
+            document.getElementById('fmrPotential').textContent = formatCurrencyShort(totalFmrIncome);
+            document.getElementById('portfolioNOI').textContent = formatCurrencyShort(totalNOI);
+            document.getElementById('portfolioValue').textContent = formatCurrencyShort(totalValue);
+            document.getElementById('portfolioPurchase').textContent = formatCurrencyShort(totalPurchase);
+            document.getElementById('portfolioCosts').textContent = formatCurrencyShort(totalCosts);
+            document.getElementById('portfolioAllIn').textContent = formatCurrencyShort(totalAllIn);
+            document.getElementById('portfolioProfit').textContent = formatCurrencyShort(totalValue - totalAllIn);
+        }
+
+        // Calculate on page load
+        calculate();
+
+        // Recalculate when inputs change
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', calculate);
+        });
+    </script>
+</body>
+</html>
