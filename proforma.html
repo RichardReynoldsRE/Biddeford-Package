@@ -601,7 +601,7 @@
                     </div>
                     <div class="stat-card">
                         <span class="stat-value" id="portfolioPurchase">$4.79M</span>
-                        <span class="stat-label">Purchase Price</span>
+                        <span class="stat-label">Package Purchase Price*</span>
                     </div>
                     <div class="stat-card">
                         <span class="stat-value" id="portfolioCosts">$430K</span>
@@ -624,6 +624,21 @@
                         <span class="stat-label">Value-Add Profit</span>
                     </div>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Package Discount Notice -->
+    <section style="background: linear-gradient(135deg, #059669 0%, #047857 100%); padding: 30px 20px; text-align: center; color: white;">
+        <div class="container">
+            <div style="max-width: 900px; margin: 0 auto;">
+                <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 10px;">💰 Portfolio Package Discount</h3>
+                <p style="font-size: 1.1rem; margin-bottom: 8px;">
+                    <strong>Buy all 6 properties together and save $248,000!</strong>
+                </p>
+                <p style="font-size: 0.95rem; opacity: 0.95;">
+                    Individual properties total $4,788,000 • Package price: <strong>$4,540,000</strong>
+                </p>
             </div>
         </div>
     </section>
@@ -1335,6 +1350,27 @@
                 </div>
             </div>
 
+            <div style="background: linear-gradient(135deg, rgba(5, 150, 105, 0.1) 0%, rgba(5, 150, 105, 0.05) 100%); border: 2px solid rgba(5, 150, 105, 0.3); border-radius: 12px; padding: 30px; margin-top: 30px;">
+                <h3 style="color: #047857; margin-bottom: 15px; font-size: 1.3rem;">💰 Portfolio Package Pricing</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 15px;">
+                    <div>
+                        <div style="font-size: 0.9rem; color: #6b7280; margin-bottom: 5px;">Individual Properties Total</div>
+                        <div style="font-size: 1.5rem; font-weight: 700; color: #0a1628;">$4,788,000</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.9rem; color: #6b7280; margin-bottom: 5px;">Package Discount</div>
+                        <div style="font-size: 1.5rem; font-weight: 700; color: #059669;">-$248,000</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.9rem; color: #6b7280; margin-bottom: 5px;">Package Price</div>
+                        <div style="font-size: 1.5rem; font-weight: 700; color: #047857;">$4,540,000</div>
+                    </div>
+                </div>
+                <p style="color: #6b7280; font-size: 0.95rem; margin: 0;">
+                    <strong>Buy the entire 6-property portfolio and save $248,000.</strong> This package deal provides immediate diversification across 32 units with a mix of cash-flowing properties and value-add development opportunities.
+                </p>
+            </div>
+
             <div class="market-overview" style="margin-top: 40px;">
                 <h3>📍 Biddeford Market Overview</h3>
                 <p>
@@ -1407,6 +1443,7 @@
 
     <script>
         // Property data
+        const packageDiscount = 248000; // Discount for buying entire portfolio
         const properties = {
             wentworth: {
                 currentIncome: 45900,
@@ -1534,15 +1571,19 @@
             });
 
             // Update portfolio summary (hero stats)
+            const packagePurchase = totalPurchase - packageDiscount;
+            const packageAllIn = totalAllIn - packageDiscount;
+            const packageProfit = totalValue - packageAllIn;
+            
             document.getElementById('totalUnits').textContent = totalUnits;
             document.getElementById('currentIncome').textContent = formatCurrencyShort(totalCurrentIncome);
             document.getElementById('fmrPotential').textContent = formatCurrencyShort(totalFmrIncome);
             document.getElementById('portfolioNOI').textContent = formatCurrencyShort(totalNOI);
             document.getElementById('portfolioValue').textContent = formatCurrencyShort(totalValue);
-            document.getElementById('portfolioPurchase').textContent = formatCurrencyShort(totalPurchase);
+            document.getElementById('portfolioPurchase').textContent = formatCurrencyShort(packagePurchase);
             document.getElementById('portfolioCosts').textContent = formatCurrencyShort(totalCosts);
-            document.getElementById('portfolioAllIn').textContent = formatCurrencyShort(totalAllIn);
-            document.getElementById('portfolioProfit').textContent = formatCurrencyShort(totalValue - totalAllIn);
+            document.getElementById('portfolioAllIn').textContent = formatCurrencyShort(packageAllIn);
+            document.getElementById('portfolioProfit').textContent = formatCurrencyShort(packageProfit);
         }
 
         // Calculate on page load
